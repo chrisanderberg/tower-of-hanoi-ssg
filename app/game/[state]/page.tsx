@@ -5,18 +5,42 @@ import Rules from "@/components/rules"
 // Generate static params for each game state (replaces getStaticPaths)
 export async function generateStaticParams() {
   // Hardcoded states for now - various disk counts from 1 to 7
-  const gameStates = [
-    // 4 disk games
-    "aaaa",
-    "cccc",
-    "abcd",
-    "aabb",
-    "abcs",
-  ]
+  function gameStatesWithoutSelectedDisk() {
+    let gameStates = ['']
+    for (let i = 0; i < 4; i++) {
+      const newGameStates: string[] = []
+      gameStates.forEach((state) => {
+        newGameStates.push(state + 'a')
+        newGameStates.push(state + 'b')
+        newGameStates.push(state + 'c')
+      })
+      gameStates = newGameStates
+    }
+    return gameStates
+  }
 
-  return gameStates.map((state) => ({
+  function gameStatesWithSelectedDisks() {
+    const states = gameStatesWithoutSelectedDisk()
+    const selectionStates = new Set<string>()
+
+    states.forEach((state) => {
+      ['a', 'b', 'c'].forEach((peg) => {
+        if (canSelectFromPeg(state, peg)) {
+          selectionStates.add(selectTopDisk(state, peg))
+        }
+      })
+    })
+
+    return [...states, ...selectionStates]
+  }
+
+  const staticParams = gameStatesWithSelectedDisks().map((state) => ({
     state: state,
   }))
+
+  //console.log(staticParams)
+
+  return staticParams
 }
 
 interface PageProps {
@@ -69,8 +93,8 @@ function selectTopDisk(state: string, pegChar: string) {
   return state.substring(0, firstIndex) + "s" + state.substring(firstIndex + 1)
 }
 
-export default function GameStatePage({ params }: PageProps) {
-  const { state } = params
+export default async function GameStatePage({ params }: PageProps) {
+  const { state } = await params
 
   // Updated validation - ensure state is 1-7 characters and only contains a, b, c, s
   const isValidState = state.length === 4 && /^[abcs]+$/.test(state)
