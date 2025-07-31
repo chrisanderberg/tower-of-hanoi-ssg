@@ -52,7 +52,7 @@ export default function TowerOfHanoiBoard({ state, linkA, linkB, linkC }: TowerO
   pegC.sort((a, b) => b - a)
 
   const pegs = [pegA, pegB, pegC]
-  const pegXPositions = [55, 125, 195] // Fixed x positions for pegs A, B, C
+  const pegXPositions = [65, 125, 185] // Fixed x positions for pegs A, B, C
   const diskHeight = 12
   const diskSpacing = 2
   const pegHeight = (diskHeight + diskSpacing) * 4 + 10 // Height to hold 4 disks + a little extra
@@ -102,7 +102,7 @@ export default function TowerOfHanoiBoard({ state, linkA, linkB, linkC }: TowerO
           ))}
 
           {/* Base (z-index 20) */}
-          <rect x="15" y={baseY - 4} width="220" height="8" fill="#374151" rx="4" ry="4" />
+          <rect x="25" y={baseY - 4} width="200" height="8" fill="#374151" rx="4" ry="4" />
 
           {/* Disks (z-index 30) */}
           {[1, 2, 3, 4].map((diskNum) => {
@@ -147,9 +147,9 @@ export default function TowerOfHanoiBoard({ state, linkA, linkB, linkC }: TowerO
               return (
                 <Link key={`click-${index}`} href={pegLink}>
                   <rect
-                    x={x - 40}
+                    x={x - 30}
                     y={baseY - pegHeight - 20} // Start above pegs
-                    width="80"
+                    width="60"
                     height={pegHeight + 40} // Extend to cover text below base
                     fill="transparent" // Make it invisible
                     className="cursor-pointer" // Keep cursor for interactivity
