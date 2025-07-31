@@ -19,6 +19,50 @@ const diskWidths = {
   4: 60,
 }
 
+// Layout configuration
+const pegXPositions = [65, 125, 185] // Fixed x positions for pegs A, B, C
+const diskHeight = 12
+const diskSpacing = 2
+const diskNumberFontSize = 10
+const pegHeight = (diskHeight + diskSpacing) * 4 + 10 // Height to hold 4 disks + a little extra
+const pegWidth = 4
+const pegRadius = 2
+const baseY = 98 // Y-coordinate for the top of the base / bottom of the pegs
+const selectedDiskY = 5
+const selectedDiskX = 125
+
+// Base configuration
+const baseX = 25
+const baseWidth = 200
+const baseHeight = 8
+const baseRadius = 4
+
+// Disk positioning calculations
+const diskGapFromBase = 5
+const diskBottomY = baseY - 4 - diskGapFromBase // (baseY - 4) - 5
+const diskCenterOffset = diskHeight / 2
+const diskSpacingOffset = diskHeight / 4
+
+// Clickable area configuration
+const clickableAreaWidth = 60
+const clickableAreaHeight = pegHeight + 40
+const clickableAreaYOffset = 20
+const clickableAreaXOffset = clickableAreaWidth / 2
+
+// Text configuration
+const statusTextY = baseY + 20
+const statusTextFontSize = 6
+const statusTextColors = {
+  valid: "#2563eb", // blue-600
+  invalid: "#9ca3af" // gray-400
+}
+
+// SVG configuration
+const svgViewBox = "0 0 250 120"
+const diskStrokeColor = "#d1d5db"
+const diskStrokeWidth = 1
+const diskCornerRadius = 6
+
 // State calculation functions moved from page component
 function calcNextGameStates(state: string) {
   const selectedIndex = state.indexOf("s")
@@ -79,6 +123,7 @@ export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardP
   const pegA: number[] = []
   const pegB: number[] = []
   const pegC: number[] = []
+  const pegs = [pegA, pegB, pegC]
   const selected: number[] = []
 
   for (let i = 1; i <= 4; i++) {
@@ -94,30 +139,21 @@ export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardP
   pegB.sort((a, b) => b - a)
   pegC.sort((a, b) => b - a)
 
-  const pegs = [pegA, pegB, pegC]
-  const pegXPositions = [65, 125, 185] // Fixed x positions for pegs A, B, C
-  const diskHeight = 12
-  const diskSpacing = 2
-  const pegHeight = (diskHeight + diskSpacing) * 4 + 10 // Height to hold 4 disks + a little extra
-  const baseY = 98 // Y-coordinate for the top of the base / bottom of the pegs
-
   // Calculate disk positions
   const getDiskPosition = (diskNum: number) => {
     const location = diskPositions[diskNum]
 
     if (location === "s") {
       // Selected disk floats above
-      return { x: 125, y: 5 }
+      return { x: selectedDiskX, y: selectedDiskY }
     }
 
     const pegIndex = location === "a" ? 0 : location === "b" ? 1 : 2
     const pegDisks = pegs[pegIndex]
     const diskIndexOnPeg = pegDisks.indexOf(diskNum)
 
-    // Calculate Y position so the bottom of the disk sits with a 5px gap from the base
-    // Top of base is at baseY - 4. We want bottom of disk at (baseY - 4) - 5 = baseY - 9.
-    // Center of disk (pos.y) should be (baseY - 9) - (diskHeight / 2) = baseY - 9 - 6 = baseY - 15.
-    const diskCenterY = baseY - 15 - diskIndexOnPeg * (diskHeight + diskSpacing) - diskHeight / 4
+    // Calculate Y position so the bottom of the disk sits with a gap from the base
+    const diskCenterY = diskBottomY - diskCenterOffset - diskIndexOnPeg * (diskHeight + diskSpacing) - diskSpacingOffset
 
     return {
       x: pegXPositions[pegIndex],
@@ -129,23 +165,31 @@ export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardP
     <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-md sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       {/* Game board SVG */}
       <div className="flex justify-center">
-        <svg viewBox="0 0 250 120" className="w-full h-auto">
+        <svg viewBox={svgViewBox} className="w-full h-auto">
           {/* Pegs (z-index 10) */}
           {pegXPositions.map((x, index) => (
             <rect
               key={`peg-${index}`}
-              x={x - 2}
+              x={x - pegWidth / 2}
               y={baseY - pegHeight}
-              width="4"
+              width={pegWidth}
               height={pegHeight}
               fill="#4b5563"
-              rx="2"
-              ry="2"
+              rx={pegRadius}
+              ry={pegRadius}
             />
           ))}
 
           {/* Base (z-index 20) */}
-          <rect x="25" y={baseY - 4} width="200" height="8" fill="#374151" rx="4" ry="4" />
+          <rect 
+            x={baseX} 
+            y={baseY - baseHeight / 2} 
+            width={baseWidth} 
+            height={baseHeight} 
+            fill="#374151" 
+            rx={baseRadius} 
+            ry={baseRadius} 
+          />
 
           {/* Disks (z-index 30) */}
           {[1, 2, 3, 4].map((diskNum) => {
@@ -157,19 +201,19 @@ export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardP
               <g key={`disk-${diskNum}`}>
                 <rect
                   x={pos.x - width / 2}
-                  y={pos.y} // Use diskHeight / 2 for rect y
+                  y={pos.y}
                   width={width}
                   height={diskHeight}
                   fill={color}
-                  stroke="#d1d5db"
-                  strokeWidth="1"
-                  rx="6"
+                  stroke={diskStrokeColor}
+                  strokeWidth={diskStrokeWidth}
+                  rx={diskCornerRadius}
                 />
                 <text
                   x={pos.x}
                   y={pos.y + diskHeight * 0.55} // Text y is already the center of the disk
                   textAnchor="middle"
-                  fontSize="10"
+                  fontSize={diskNumberFontSize}
                   fill="white"
                   fontWeight="bold"
                   dominantBaseline="middle" // Align text middle with y coordinate
@@ -184,26 +228,26 @@ export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardP
           {pegXPositions.map((x, index) => {
             const pegLink = pegLinks[index]
             const text = pegLink ? "Click to move" : "Invalid move"
-            const textColor = pegLink ? "#2563eb" : "#9ca3af" // blue-600 or gray-400
+            const textColor = pegLink ? statusTextColors.valid : statusTextColors.invalid
 
             if (pegLink) {
               return (
                 <Link key={`click-${index}`} href={pegLink}>
                   <rect
-                    x={x - 30}
-                    y={baseY - pegHeight - 20} // Start above pegs
-                    width="80"
-                    height={pegHeight + 40} // Extend to cover text below base
-                    fill="transparent" // Make it invisible
-                    className="cursor-pointer" // Keep cursor for interactivity
+                    x={x - clickableAreaXOffset}
+                    y={baseY - pegHeight - clickableAreaYOffset}
+                    width={clickableAreaWidth}
+                    height={clickableAreaHeight}
+                    fill="transparent"
+                    className="cursor-pointer"
                   />
                   <text
                     x={x}
-                    y={baseY + 20} // Position below the base
+                    y={statusTextY}
                     textAnchor="middle"
-                    fontSize="6" // Scaled to 60% (from 10 to 6)
+                    fontSize={statusTextFontSize}
                     fill={textColor}
-                    className="cursor-pointer" // Ensure text also shows pointer
+                    className="cursor-pointer"
                   >
                     {text}
                   </text>
@@ -214,9 +258,9 @@ export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardP
                 <g key={`status-text-${index}`}>
                   <text
                     x={x}
-                    y={baseY + 20} // Position below the base
+                    y={statusTextY}
                     textAnchor="middle"
-                    fontSize="6" // Scaled to 60% (from 10 to 6)
+                    fontSize={statusTextFontSize}
                     fill={textColor}
                   >
                     {text}
