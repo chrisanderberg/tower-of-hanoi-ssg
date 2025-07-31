@@ -49,39 +49,7 @@ interface PageProps {
   }
 }
 
-interface NextGameStates {
-  stateA?: string
-  stateB?: string
-  stateC?: string
-}
-
-function calcNextGameStates(state: string) {
-  const selectedIndex = state.indexOf("s")
-  const hasSelectedDisk = selectedIndex !== -1
-
-  if (hasSelectedDisk) {
-    // A disk is selected - try to place it on each peg
-    const nextStateA = canPlaceOnPeg(state, selectedIndex, "a") ? state.replace("s", "a") : undefined
-    const nextStateB = canPlaceOnPeg(state, selectedIndex, "b") ? state.replace("s", "b") : undefined
-    const nextStateC = canPlaceOnPeg(state, selectedIndex, "c") ? state.replace("s", "c") : undefined
-
-    return { nextStateA, nextStateB, nextStateC }
-  } else {
-    // No disk selected - try to select the top disk from each peg
-    const nextStateA = canSelectFromPeg(state, "a") ? selectTopDisk(state, "a") : undefined
-    const nextStateB = canSelectFromPeg(state, "b") ? selectTopDisk(state, "b") : undefined
-    const nextStateC = canSelectFromPeg(state, "c") ? selectTopDisk(state, "c") : undefined
-
-    return { nextStateA, nextStateB, nextStateC }
-  }
-}
-
-function canPlaceOnPeg(state: string, selectedIndex: number, pegChar: string) {
-  // Check if there's a smaller disk (to the left of selected disk) on the target peg
-  const leftPart = state.substring(0, selectedIndex)
-  return !leftPart.includes(pegChar)
-}
-
+// Helper functions for generateStaticParams
 function canSelectFromPeg(state: string, pegChar: string) {
   // Check if the peg has any disks
   return state.includes(pegChar)
@@ -98,8 +66,6 @@ export default async function GameStatePage({ params }: PageProps) {
 
   // Updated validation - ensure state is 1-7 characters and only contains a, b, c, s
   const isValidState = state.length === 4 && /^[abcs]+$/.test(state)
-  const diskCount = state.length
-  const { nextStateA, nextStateB, nextStateC } = calcNextGameStates(state)
 
   if (!isValidState) {
     return (
@@ -128,9 +94,7 @@ export default async function GameStatePage({ params }: PageProps) {
         <div className="flex justify-center">
           <TowerOfHanoiBoard
             state={state}
-            linkA={nextStateA ? `/game/${nextStateA}` : undefined}
-            linkB={nextStateB ? `/game/${nextStateB}` : undefined}
-            linkC={nextStateC ? `/game/${nextStateC}` : undefined}
+            baseUrl="/game/"
           />
         </div>
 

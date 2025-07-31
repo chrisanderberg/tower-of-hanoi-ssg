@@ -2,9 +2,7 @@ import Link from "next/link"
 
 interface TowerOfHanoiBoardProps {
   state: string
-  linkA?: string
-  linkB?: string
-  linkC?: string
+  baseUrl: string
 }
 
 const diskColors = {
@@ -21,8 +19,53 @@ const diskWidths = {
   4: 60,
 }
 
-export default function TowerOfHanoiBoard({ state, linkA, linkB, linkC }: TowerOfHanoiBoardProps) {
-  const pegLinks = [linkA, linkB, linkC]
+// State calculation functions moved from page component
+function calcNextGameStates(state: string) {
+  const selectedIndex = state.indexOf("s")
+  const hasSelectedDisk = selectedIndex !== -1
+
+  if (hasSelectedDisk) {
+    // A disk is selected - try to place it on each peg
+    const nextStateA = canPlaceOnPeg(state, selectedIndex, "a") ? state.replace("s", "a") : undefined
+    const nextStateB = canPlaceOnPeg(state, selectedIndex, "b") ? state.replace("s", "b") : undefined
+    const nextStateC = canPlaceOnPeg(state, selectedIndex, "c") ? state.replace("s", "c") : undefined
+
+    return { nextStateA, nextStateB, nextStateC }
+  } else {
+    // No disk selected - try to select the top disk from each peg
+    const nextStateA = canSelectFromPeg(state, "a") ? selectTopDisk(state, "a") : undefined
+    const nextStateB = canSelectFromPeg(state, "b") ? selectTopDisk(state, "b") : undefined
+    const nextStateC = canSelectFromPeg(state, "c") ? selectTopDisk(state, "c") : undefined
+
+    return { nextStateA, nextStateB, nextStateC }
+  }
+}
+
+function canPlaceOnPeg(state: string, selectedIndex: number, pegChar: string) {
+  // Check if there's a smaller disk (to the left of selected disk) on the target peg
+  const leftPart = state.substring(0, selectedIndex)
+  return !leftPart.includes(pegChar)
+}
+
+function canSelectFromPeg(state: string, pegChar: string) {
+  // Check if the peg has any disks
+  return state.includes(pegChar)
+}
+
+function selectTopDisk(state: string, pegChar: string) {
+  // Find the first occurrence (smallest/topmost disk) and replace with 's'
+  const firstIndex = state.indexOf(pegChar)
+  return state.substring(0, firstIndex) + "s" + state.substring(firstIndex + 1)
+}
+
+export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardProps) {
+  // Calculate next states and create links
+  const { nextStateA, nextStateB, nextStateC } = calcNextGameStates(state)
+  const pegLinks = [
+    nextStateA ? `${baseUrl}${nextStateA}` : undefined,
+    nextStateB ? `${baseUrl}${nextStateB}` : undefined,
+    nextStateC ? `${baseUrl}${nextStateC}` : undefined,
+  ]
 
   // Parse state into disk positions
   const diskPositions: { [key: number]: "a" | "b" | "c" | "s" } = {}
@@ -149,7 +192,7 @@ export default function TowerOfHanoiBoard({ state, linkA, linkB, linkC }: TowerO
                   <rect
                     x={x - 30}
                     y={baseY - pegHeight - 20} // Start above pegs
-                    width="60"
+                    width="80"
                     height={pegHeight + 40} // Extend to cover text below base
                     fill="transparent" // Make it invisible
                     className="cursor-pointer" // Keep cursor for interactivity

@@ -19,7 +19,7 @@ export default function HomePage() {
         </div>
 
         <div className="flex justify-center">
-          <TowerOfHanoiBoard state={defaultState} />
+          <TowerOfHanoiBoard state={defaultState} baseUrl="/game/" />
         </div>
 
         <Rules />
