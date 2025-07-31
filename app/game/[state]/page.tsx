@@ -1,4 +1,4 @@
-import TowerOfHanoiBoard from "@/components/tower-of-hanoi-board"
+import TowerOfHanoiGame from "@/components/tower-of-hanoi-game"
 import Navigation from "@/components/navigation"
 import Rules from "@/components/rules"
 
@@ -92,7 +92,7 @@ export default async function GameStatePage({ params }: PageProps) {
       <main className="container mx-auto px-4 py-8">
 
         <div className="flex justify-center">
-          <TowerOfHanoiBoard
+          <TowerOfHanoiGame
             state={state}
             baseUrl="/game/"
           />

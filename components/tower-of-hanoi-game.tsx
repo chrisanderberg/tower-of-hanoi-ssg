@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-interface TowerOfHanoiBoardProps {
+interface TowerOfHanoiGameProps {
   state: string
   baseUrl: string
 }
@@ -106,7 +106,7 @@ function selectTopDisk(state: string, pegChar: string) {
   return state.substring(0, firstIndex) + "s" + state.substring(firstIndex + 1)
 }
 
-export default function TowerOfHanoiBoard({ state, baseUrl }: TowerOfHanoiBoardProps) {
+export default function TowerOfHanoiGame({ state, baseUrl }: TowerOfHanoiGameProps) {
   // Calculate next states and create links
   const { nextStateA, nextStateB, nextStateC } = calcNextGameStates(state)
   const pegLinks = [

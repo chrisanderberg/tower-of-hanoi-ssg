@@ -1,5 +1,5 @@
 import Navigation from "@/components/navigation"
-import TowerOfHanoiBoard from "@/components/tower-of-hanoi-board"
+import TowerOfHanoiBoard from "@/components/tower-of-hanoi-game"
 import Rules from "@/components/rules"
 
 export default function HomePage() {
