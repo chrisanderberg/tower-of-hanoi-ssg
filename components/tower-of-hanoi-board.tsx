@@ -20,7 +20,11 @@ const diskWidths = {
 }
 
 // Layout configuration
-const pegXPositions = [65, 125, 185] // Fixed x positions for pegs A, B, C
+const viewBoxWidth = 250
+const viewBoxHeight = 120
+
+const pegSpacing = 60
+const pegXPositions = [viewBoxWidth / 2 - pegSpacing, viewBoxWidth / 2, viewBoxWidth / 2 + pegSpacing] // Fixed x positions for pegs A, B, C
 const diskHeight = 12
 const diskSpacing = 2
 const diskNumberFontSize = 10
@@ -29,24 +33,27 @@ const pegWidth = 4
 const pegRadius = 2
 const baseY = 98 // Y-coordinate for the top of the base / bottom of the pegs
 const selectedDiskY = 5
-const selectedDiskX = 125
+const selectedDiskX = viewBoxWidth / 2
 
 // Base configuration
-const baseX = 25
 const baseWidth = 200
 const baseHeight = 8
 const baseRadius = 4
+const baseX = (viewBoxWidth - baseWidth) / 2
 
 // Disk positioning calculations
 const diskGapFromBase = 5
 const diskBottomY = baseY - 4 - diskGapFromBase // (baseY - 4) - 5
 const diskCenterOffset = diskHeight / 2
 const diskSpacingOffset = diskHeight / 4
+const diskStrokeColor = "#d1d5db"
+const diskStrokeWidth = 1
+const diskCornerRadius = 6
 
 // Clickable area configuration
-const clickableAreaWidth = 60
-const clickableAreaHeight = pegHeight + 40
-const clickableAreaYOffset = 20
+const clickableAreaWidth = pegSpacing
+const clickableAreaYOffset = 30
+const clickableAreaHeight = pegHeight + 2 * clickableAreaYOffset
 const clickableAreaXOffset = clickableAreaWidth / 2
 
 // Text configuration
@@ -58,10 +65,7 @@ const statusTextColors = {
 }
 
 // SVG configuration
-const svgViewBox = "0 0 250 120"
-const diskStrokeColor = "#d1d5db"
-const diskStrokeWidth = 1
-const diskCornerRadius = 6
+const svgViewBox = `0 0 ${viewBoxWidth} ${viewBoxHeight}`
 
 // State calculation functions moved from page component
 function calcNextGameStates(state: string) {
