@@ -11,23 +11,29 @@ interface TowerOfHanoiStateGraphProps {
 const nodeSize = 120
 const graphPadding = 50
 
-function calculateNodePosition(state: string, maxDistance: number) {
-  const pegVectors = {
-    a: {x: 0, y: -1},
-    b: {x: -Math.cos(Math.PI / 6), y: 0.5},
-    c: {x: Math.cos(Math.PI / 6), y: 0.5},
+function calculateNodePosition(state: string, diskNum: number, vecA: {x: number, y: number}, vecB: {x: number, y: number}, vecC: {x: number, y: number}) {
+  let pos = {x: 0, y: 0}
+  if (diskNum === 0) {
+    return pos
   }
 
-  let x = 0
-  let y = 0
+  const peg = state[diskNum - 1]
 
-  for (let i = 0; i < state.length; i++) {
-    const peg = state[i]
-    const vector = pegVectors[peg as keyof typeof pegVectors]
-    x += (2 ** (i - 4)) * vector.x * maxDistance
-    y += (2 ** (i - 4)) * vector.y * maxDistance
+  if (peg === 'a') {
+    pos = calculateNodePosition(state, diskNum - 1, vecA, vecC, vecB)
+    pos.x += vecA.x
+    pos.y += vecA.y
+  } else if (peg === 'b') {
+    pos = calculateNodePosition(state, diskNum - 1, vecC, vecB, vecA)
+    pos.x += vecB.x
+    pos.y += vecB.y
+  } else if (peg === 'c') {
+    pos = calculateNodePosition(state, diskNum - 1, vecB, vecA, vecC)
+    pos.x += vecC.x
+    pos.y += vecC.y
   }
-  return {x, y}
+
+  return {x: pos.x / 2, y: pos.y / 2}
 }
 
 // Calculate node positions in a grid layout
@@ -37,7 +43,8 @@ function calculateNodePositions(states: string[]) {
   const rows = Math.ceil(states.length / cols)
   
   states.forEach((state, index) => {
-    positions[state] = calculateNodePosition(state, 1500)
+    const pos = calculateNodePosition(state, 4, {x: 0, y: -1}, {x: -Math.cos(Math.PI / 6), y: 0.5}, {x: Math.cos(Math.PI / 6), y: 0.5})
+    positions[state] = {x:1500 * pos.x, y: 1500 * pos.y}
   })
   
   return positions
