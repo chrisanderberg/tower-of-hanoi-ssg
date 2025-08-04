@@ -1,5 +1,12 @@
-interface GameConfigurationProps {
+import { calculateGameLayout } from "../lib/game-layout"
+
+interface TowerOfHanoiStateViewProps {
   gameState: string
+  size?: number
+  xOffset?: number
+  yOffset?: number
+  xCenter?: number
+  yCenter?: number
 }
 
 const diskColors = {
@@ -16,41 +23,10 @@ const diskWidths = {
   4: 60,
 }
 
-// Layout configuration
-const viewBoxWidth = 250
-const viewBoxHeight = 120
+export default function TowerOfHanoiStateView({ gameState, size = 250, xOffset = 0, yOffset = 0, xCenter, yCenter}: TowerOfHanoiStateViewProps) {
+  const layout = calculateGameLayout(size, xOffset, yOffset, xCenter, yCenter)
+  const diskStrokeColor = "#d1d5db"
 
-const pegSpacing = 60
-const pegXPositions = [viewBoxWidth / 2 - pegSpacing, viewBoxWidth / 2, viewBoxWidth / 2 + pegSpacing] // Fixed x positions for pegs A, B, C
-const diskHeight = 12
-const diskSpacing = 2
-const diskNumberFontSize = 10
-const pegHeight = (diskHeight + diskSpacing) * 4 + 10 // Height to hold 4 disks + a little extra
-const pegWidth = 4
-const pegRadius = 2
-const baseY = 98 // Y-coordinate for the top of the base / bottom of the pegs
-const selectedDiskY = 5
-const selectedDiskX = viewBoxWidth / 2
-
-// Base configuration
-const baseWidth = 200
-const baseHeight = 8
-const baseRadius = 4
-const baseX = (viewBoxWidth - baseWidth) / 2
-
-// Disk positioning calculations
-const diskGapFromBase = 5
-const diskBottomY = baseY - 4 - diskGapFromBase // (baseY - 4) - 5
-const diskCenterOffset = diskHeight / 2
-const diskSpacingOffset = diskHeight / 4
-const diskStrokeColor = "#d1d5db"
-const diskStrokeWidth = 1
-const diskCornerRadius = 6
-
-// SVG configuration
-const svgViewBox = `0 0 ${viewBoxWidth} ${viewBoxHeight}`
-
-export default function GameConfiguration({ gameState }: GameConfigurationProps) {
   // Parse state into disk positions
   const diskPositions: { [key: number]: "a" | "b" | "c" | "s" } = {}
   for (let i = 0; i < 4; i++) {
@@ -85,7 +61,7 @@ export default function GameConfiguration({ gameState }: GameConfigurationProps)
 
     if (location === "s") {
       // Selected disk floats above
-      return { x: selectedDiskX, y: selectedDiskY }
+      return { x: layout.selectedDiskX, y: layout.selectedDiskY }
     }
 
     const pegIndex = location === "a" ? 0 : location === "b" ? 1 : 2
@@ -93,10 +69,10 @@ export default function GameConfiguration({ gameState }: GameConfigurationProps)
     const diskIndexOnPeg = pegDisks.indexOf(diskNum)
 
     // Calculate Y position so the bottom of the disk sits with a gap from the base
-    const diskCenterY = diskBottomY - diskCenterOffset - diskIndexOnPeg * (diskHeight + diskSpacing) - diskSpacingOffset
+    const diskCenterY = layout.diskBottomY - layout.diskCenterOffset - diskIndexOnPeg * (layout.diskHeight + layout.diskSpacing) - layout.diskSpacingOffset
 
     return {
-      x: pegXPositions[pegIndex],
+      x: layout.pegXPositions[pegIndex],
       y: diskCenterY,
     }
   }
@@ -104,34 +80,34 @@ export default function GameConfiguration({ gameState }: GameConfigurationProps)
   return (
     <>
       {/* Pegs (z-index 10) */}
-      {pegXPositions.map((x, index) => (
+      {layout.pegXPositions.map((x, index) => (
         <rect
           key={`peg-${index}`}
-          x={x - pegWidth / 2}
-          y={baseY - pegHeight}
-          width={pegWidth}
-          height={pegHeight}
+          x={x - layout.pegWidth / 2}
+          y={layout.baseY - layout.pegHeight}
+          width={layout.pegWidth}
+          height={layout.pegHeight}
           fill="#4b5563"
-          rx={pegRadius}
-          ry={pegRadius}
+          rx={layout.pegRadius}
+          ry={layout.pegRadius}
         />
       ))}
 
       {/* Base (z-index 20) */}
       <rect 
-        x={baseX} 
-        y={baseY - baseHeight / 2} 
-        width={baseWidth} 
-        height={baseHeight} 
+        x={layout.baseX} 
+        y={layout.baseY - layout.baseHeight / 2} 
+        width={layout.baseWidth} 
+        height={layout.baseHeight} 
         fill="#374151" 
-        rx={baseRadius} 
-        ry={baseRadius} 
+        rx={layout.baseRadius} 
+        ry={layout.baseRadius} 
       />
 
       {/* Disks (z-index 30) */}
       {[1, 2, 3, 4].map((diskNum) => {
         const pos = getDiskPosition(diskNum)
-        const width = diskWidths[diskNum as keyof typeof diskWidths]
+        const width = diskWidths[diskNum as keyof typeof diskWidths] * layout.scale
         const color = diskColors[diskNum as keyof typeof diskColors]
 
         return (
@@ -140,17 +116,17 @@ export default function GameConfiguration({ gameState }: GameConfigurationProps)
               x={pos.x - width / 2}
               y={pos.y}
               width={width}
-              height={diskHeight}
+              height={layout.diskHeight}
               fill={color}
               stroke={diskStrokeColor}
-              strokeWidth={diskStrokeWidth}
-              rx={diskCornerRadius}
+              strokeWidth={layout.diskStrokeWidth}
+              rx={layout.diskCornerRadius}
             />
             <text
               x={pos.x}
-              y={pos.y + diskHeight * 0.55} // Text y is already the center of the disk
+              y={pos.y + layout.diskHeight * 0.55} // Text y is already the center of the disk
               textAnchor="middle"
-              fontSize={diskNumberFontSize}
+              fontSize={layout.diskNumberFontSize}
               fill="white"
               fontWeight="bold"
               dominantBaseline="middle" // Align text middle with y coordinate

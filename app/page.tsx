@@ -1,5 +1,5 @@
 import Navigation from "@/components/navigation"
-import TowerOfHanoiBoard from "@/components/tower-of-hanoi-game"
+import TowerOfHanoiGameBoard from "@/components/tower-of-hanoi-game-board"
 import Rules from "@/components/rules"
 
 export default function HomePage() {
@@ -19,7 +19,7 @@ export default function HomePage() {
         </div>
 
         <div className="flex justify-center">
-          <TowerOfHanoiBoard state={defaultState} baseUrl="/game/" />
+          <TowerOfHanoiGameBoard state={defaultState} baseUrl="/game/" />
         </div>
 
         <Rules />
