@@ -9,8 +9,26 @@ interface TowerOfHanoiStateGraphProps {
 }
 
 const nodeSize = 120
-const nodeSpacing = 200
 const graphPadding = 50
+
+function calculateNodePosition(state: string, maxDistance: number) {
+  const pegVectors = {
+    a: {x: 0, y: -1},
+    b: {x: -Math.cos(Math.PI / 6), y: 0.5},
+    c: {x: Math.cos(Math.PI / 6), y: 0.5},
+  }
+
+  let x = 0
+  let y = 0
+
+  for (let i = 0; i < state.length; i++) {
+    const peg = state[i]
+    const vector = pegVectors[peg as keyof typeof pegVectors]
+    x += (2 ** (i - 4)) * vector.x * maxDistance
+    y += (2 ** (i - 4)) * vector.y * maxDistance
+  }
+  return {x, y}
+}
 
 // Calculate node positions in a grid layout
 function calculateNodePositions(states: string[]) {
@@ -19,12 +37,7 @@ function calculateNodePositions(states: string[]) {
   const rows = Math.ceil(states.length / cols)
   
   states.forEach((state, index) => {
-    const col = index % cols
-    const row = Math.floor(index / cols)
-    positions[state] = {
-      x: graphPadding + col * nodeSpacing,
-      y: graphPadding + row * nodeSpacing
-    }
+    positions[state] = calculateNodePosition(state, 1500)
   })
   
   return positions
@@ -35,10 +48,12 @@ export default function TowerOfHanoiStateGraph({ baseUrl }: TowerOfHanoiStateGra
   const nodePositions = calculateNodePositions(allStates)
   
   // Calculate graph dimensions
-  const maxX = Math.max(...Object.values(nodePositions).map(pos => pos.x)) + nodeSize + graphPadding
-  const maxY = Math.max(...Object.values(nodePositions).map(pos => pos.y)) + nodeSize + graphPadding
+  const minX = Math.min(...Object.values(nodePositions).map(pos => pos.x)) - nodeSize / 2 - graphPadding
+  const minY = Math.min(...Object.values(nodePositions).map(pos => pos.y)) - nodeSize / 2 - graphPadding
+  const maxX = Math.max(...Object.values(nodePositions).map(pos => pos.x)) + nodeSize / 2 + graphPadding
+  const maxY = Math.max(...Object.values(nodePositions).map(pos => pos.y)) + nodeSize / 2 + graphPadding
   
-  const viewBox = `0 0 ${maxX} ${maxY}`
+  const viewBox = `${minX} ${minY} ${maxX-minX} ${maxY-minY}`
   
   // Generate edges (connections between states)
   const edges: Array<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }> = []
@@ -86,8 +101,8 @@ export default function TowerOfHanoiStateGraph({ baseUrl }: TowerOfHanoiStateGra
                 key={`node-${state}`}
                 state={state}
                 nodeSize={nodeSize}
-                xOffset={pos.x}
-                yOffset={pos.y}
+                xCenter={pos.x}
+                yCenter={pos.y}
                 baseUrl={baseUrl}
               />
             )

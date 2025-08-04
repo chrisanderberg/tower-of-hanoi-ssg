@@ -4,8 +4,8 @@ import TowerOfHanoiStateView from "./tower-of-hanoi-state-view"
 interface TowerOfHanoiStateNodeProps {
   state: string
   nodeSize: number
-  xOffset: number
-  yOffset: number
+  xOffset?: number
+  yOffset?: number
   xCenter?: number
   yCenter?: number
   baseUrl: string
