@@ -1,51 +1,78 @@
 // Game state validation
 export function isValidGameState(state: string): boolean {
-  return state.length === 4 && /^[abcs]+$/.test(state)
+  return state.length === 4 && /^[abc]+$/.test(state) // Removed 's' since we no longer use selected states
 }
 
-// Calculate next possible game states from current state
-export function calcNextGameStates(state: string) {
-  const selectedIndex = state.indexOf("s")
-  const hasSelectedDisk = selectedIndex !== -1
+// Calculate all possible moves for a given state
+export function calculatePossibleMoves(state: string): Array<{
+  fromState: string
+  toState: string
+  fromPeg: string
+  toPeg: string
+  diskNumber: number
+}> {
+  const moves: Array<{
+    fromState: string
+    toState: string
+    fromPeg: string
+    toPeg: string
+    diskNumber: number
+  }> = []
 
-  if (hasSelectedDisk) {
-    // A disk is selected - try to place it on each peg
-    const nextStateA = canPlaceOnPeg(state, selectedIndex, "a") ? state.replace("s", "a") : undefined
-    const nextStateB = canPlaceOnPeg(state, selectedIndex, "b") ? state.replace("s", "b") : undefined
-    const nextStateC = canPlaceOnPeg(state, selectedIndex, "c") ? state.replace("s", "c") : undefined
-
-    return { nextStateA, nextStateB, nextStateC }
-  } else {
-    // No disk selected - try to select the top disk from each peg
-    const nextStateA = canSelectFromPeg(state, "a") ? selectTopDisk(state, "a") : undefined
-    const nextStateB = canSelectFromPeg(state, "b") ? selectTopDisk(state, "b") : undefined
-    const nextStateC = canSelectFromPeg(state, "c") ? selectTopDisk(state, "c") : undefined
-
-    return { nextStateA, nextStateB, nextStateC }
+  // Find which disk is on top of each peg
+  const pegTopDisks: { [key: string]: number | null } = { a: null, b: null, c: null }
+  
+  for (let i = 0; i < state.length; i++) {
+    const diskNumber = i + 1
+    const peg = state[i] as 'a' | 'b' | 'c'
+    if (pegTopDisks[peg] === null) {
+      pegTopDisks[peg] = diskNumber
+    }
   }
+
+  // Disk 1 (smallest) can always move to any other peg
+  const disk1Peg = state[0] as 'a' | 'b' | 'c'
+  const otherPegs = ['a', 'b', 'c'].filter(peg => peg !== disk1Peg) as Array<'a' | 'b' | 'c'>
+  
+  otherPegs.forEach(toPeg => {
+    const newState = toPeg + state.substring(1)
+    moves.push({
+      fromState: state,
+      toState: newState,
+      fromPeg: disk1Peg,
+      toPeg: toPeg,
+      diskNumber: 1
+    })
+  })
+
+  // Find the third possible move (involving pegs that don't have disk 1)
+  const topDisk1 = pegTopDisks[otherPegs[0]]
+  const topDisk2 = pegTopDisks[otherPegs[1]]
+  if ((topDisk1 === null && topDisk2 !== null) || (topDisk1 !== null && topDisk2 !== null && topDisk1 > topDisk2)) {
+    const newState = state.substring(0, topDisk2 - 1) + otherPegs[0] + state.substring(topDisk2)
+    moves.push({
+      fromState: state,
+      toState: newState,
+      fromPeg: otherPegs[1],
+      toPeg: otherPegs[0],
+      diskNumber: topDisk2
+    })
+  }
+  if ((topDisk1 !== null && topDisk2 === null) || (topDisk1 !== null && topDisk2 !== null && topDisk1 < topDisk2)) {
+    const newState = state.substring(0, topDisk1 - 1) + otherPegs[1] + state.substring(topDisk1)
+    moves.push({
+      fromState: state,
+      toState: newState,
+      fromPeg: otherPegs[0],
+      toPeg: otherPegs[1],
+      diskNumber: topDisk1
+    })
+  }
+
+  console.log(moves)
+  return moves
 }
 
-// Check if a disk can be placed on a specific peg
-export function canPlaceOnPeg(state: string, selectedIndex: number, pegChar: string) {
-  // Check if there's a smaller disk (to the left of selected disk) on the target peg
-  const leftPart = state.substring(0, selectedIndex)
-  return !leftPart.includes(pegChar)
-}
-
-// Check if a disk can be selected from a specific peg
-export function canSelectFromPeg(state: string, pegChar: string) {
-  // Check if the peg has any disks
-  return state.includes(pegChar)
-}
-
-// Select the top disk from a specific peg
-export function selectTopDisk(state: string, pegChar: string) {
-  // Find the first occurrence (smallest/topmost disk) and replace with 's'
-  const firstIndex = state.indexOf(pegChar)
-  return state.substring(0, firstIndex) + "s" + state.substring(firstIndex + 1)
-}
-
-// Generate all possible game states for 4 disks
 export function generateAllStates(): string[] {
   const states: string[] = []
   const pegs = ["a", "b", "c"]
@@ -63,34 +90,3 @@ export function generateAllStates(): string[] {
   
   return states
 }
-
-// Generate game states without selected disks (for static generation)
-export function gameStatesWithoutSelectedDisk(): string[] {
-  let gameStates = ['']
-  for (let i = 0; i < 4; i++) {
-    const newGameStates: string[] = []
-    gameStates.forEach((state) => {
-      newGameStates.push(state + 'a')
-      newGameStates.push(state + 'b')
-      newGameStates.push(state + 'c')
-    })
-    gameStates = newGameStates
-  }
-  return gameStates
-}
-
-// Generate game states with selected disks (for static generation)
-export function gameStatesWithSelectedDisks(): string[] {
-  const states = gameStatesWithoutSelectedDisk()
-  const selectionStates = new Set<string>()
-
-  states.forEach((state) => {
-    ['a', 'b', 'c'].forEach((peg) => {
-      if (canSelectFromPeg(state, peg)) {
-        selectionStates.add(selectTopDisk(state, peg))
-      }
-    })
-  })
-
-  return [...states, ...selectionStates]
-} 

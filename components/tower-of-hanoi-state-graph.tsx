@@ -1,7 +1,7 @@
 import Link from "next/link"
 import TowerOfHanoiStateView from "./tower-of-hanoi-state-view"
 import { calculateGameLayout } from "../lib/game-layout"
-import { calcNextGameStates, generateAllStates } from "../lib/game-logic"
+import { calculatePossibleMoves, generateAllStates } from "../lib/game-logic"
 import TowerOfHanoiStateNode from "./tower-of-hanoi-state-node"
 
 interface TowerOfHanoiStateGraphProps {
@@ -10,6 +10,14 @@ interface TowerOfHanoiStateGraphProps {
 
 const nodeSize = 120
 const graphPadding = 50
+
+// Disk colors for edge coloring
+const diskColors = {
+  1: "#ef4444", // red
+  2: "#eab308", // yellow
+  3: "#22c55e", // green
+  4: "#3b82f6", // blue
+}
 
 function calculateNodePosition(state: string, diskNum: number, vecA: {x: number, y: number}, vecB: {x: number, y: number}, vecC: {x: number, y: number}) {
   let pos = {x: 0, y: 0}
@@ -62,24 +70,34 @@ export default function TowerOfHanoiStateGraph({ baseUrl }: TowerOfHanoiStateGra
   
   const viewBox = `${minX} ${minY} ${maxX-minX} ${maxY-minY}`
   
-  // Generate edges (connections between states)
-  const edges: Array<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }> = []
+  // Generate edges (connections between states) with disk color information
+  const edges: Array<{ 
+    from: string; 
+    to: string; 
+    fromPos: { x: number; y: number }; 
+    toPos: { x: number; y: number };
+    diskNumber: number;
+    color: string;
+  }> = []
   
   allStates.forEach(state => {
-    const { nextStateA, nextStateB, nextStateC } = calcNextGameStates(state)
-    const nextStates = [nextStateA, nextStateB, nextStateC].filter(Boolean) as string[]
+    const moves = calculatePossibleMoves(state)
     
-    nextStates.forEach(nextState => {
-      if (nodePositions[nextState]) {
+    moves.forEach(move => {
+      if (nodePositions[move.toState]) {
         edges.push({
-          from: state,
-          to: nextState,
-          fromPos: nodePositions[state],
-          toPos: nodePositions[nextState]
+          from: move.fromState,
+          to: move.toState,
+          fromPos: nodePositions[move.fromState],
+          toPos: nodePositions[move.toState],
+          diskNumber: move.diskNumber,
+          color: diskColors[move.diskNumber as keyof typeof diskColors]
         })
       }
     })
   })
+
+  console.log(edges)
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-6xl mx-auto">
@@ -89,13 +107,13 @@ export default function TowerOfHanoiStateGraph({ baseUrl }: TowerOfHanoiStateGra
           {edges.map((edge, index) => (
             <line
               key={`edge-${index}`}
-              x1={edge.fromPos.x + nodeSize / 2}
-              y1={edge.fromPos.y + nodeSize / 2}
-              x2={edge.toPos.x + nodeSize / 2}
-              y2={edge.toPos.y + nodeSize / 2}
-              stroke="#94a3b8"
-              strokeWidth={1}
-              opacity={0.6}
+              x1={edge.fromPos.x}
+              y1={edge.fromPos.y}
+              x2={edge.toPos.x}
+              y2={edge.toPos.y}
+              stroke={edge.color}
+              strokeWidth={8}
+              opacity={0.8}
             />
           ))}
           

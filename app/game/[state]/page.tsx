@@ -1,11 +1,11 @@
 import TowerOfHanoiGameBoard from "@/components/tower-of-hanoi-game-board"
 import Navigation from "@/components/navigation"
 import Rules from "@/components/rules"
-import { gameStatesWithSelectedDisks, isValidGameState } from "@/lib/game-logic"
+import { generateAllStates, isValidGameState } from "@/lib/game-logic"
 
 // Generate static params for each game state (replaces getStaticPaths)
 export async function generateStaticParams() {
-  const staticParams = gameStatesWithSelectedDisks().map((state) => ({
+  const staticParams = generateAllStates().map((state) => ({
     state: state,
   }))
 
