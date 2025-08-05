@@ -1,4 +1,4 @@
-import { calculateGameLayout } from "../lib/game-layout"
+import { calculateGameLayout, diskColors, diskWidths } from "../lib/game-layout"
 
 interface TowerOfHanoiStateViewProps {
   gameState: string
@@ -9,29 +9,15 @@ interface TowerOfHanoiStateViewProps {
   yCenter?: number
 }
 
-const diskColors = {
-  1: "#ef4444", // red
-  2: "#eab308", // yellow
-  3: "#22c55e", // green
-  4: "#3b82f6", // blue
-}
-
-const diskWidths = {
-  1: 30,
-  2: 40,
-  3: 50,
-  4: 60,
-}
-
 export default function TowerOfHanoiStateView({ gameState, size = 250, xOffset = 0, yOffset = 0, xCenter, yCenter}: TowerOfHanoiStateViewProps) {
   const layout = calculateGameLayout(size, xOffset, yOffset, xCenter, yCenter)
   const diskStrokeColor = "#d1d5db"
 
   // Parse state into disk positions
-  const diskPositions: { [key: number]: "a" | "b" | "c" | "s" } = {}
+  const diskPositions: { [key: number]: "a" | "b" | "c" } = {}
   for (let i = 0; i < 4; i++) {
     const diskNumber = i + 1
-    const location = gameState[i] as "a" | "b" | "c" | "s"
+    const location = gameState[i] as "a" | "b" | "c"
     diskPositions[diskNumber] = location
   }
 
@@ -40,14 +26,12 @@ export default function TowerOfHanoiStateView({ gameState, size = 250, xOffset =
   const pegB: number[] = []
   const pegC: number[] = []
   const pegs = [pegA, pegB, pegC]
-  const selected: number[] = []
 
   for (let i = 1; i <= 4; i++) {
     const location = diskPositions[i]
     if (location === "a") pegA.push(i)
     else if (location === "b") pegB.push(i)
     else if (location === "c") pegC.push(i)
-    else if (location === "s") selected.push(i)
   }
 
   // Sort so larger disks are at bottom
@@ -58,12 +42,6 @@ export default function TowerOfHanoiStateView({ gameState, size = 250, xOffset =
   // Calculate disk positions
   const getDiskPosition = (diskNum: number) => {
     const location = diskPositions[diskNum]
-
-    if (location === "s") {
-      // Selected disk floats above
-      return { x: layout.selectedDiskX, y: layout.selectedDiskY }
-    }
-
     const pegIndex = location === "a" ? 0 : location === "b" ? 1 : 2
     const pegDisks = pegs[pegIndex]
     const diskIndexOnPeg = pegDisks.indexOf(diskNum)

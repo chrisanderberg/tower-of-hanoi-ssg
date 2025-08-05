@@ -1,6 +1,6 @@
 import Link from "next/link"
 import TowerOfHanoiStateView from "./tower-of-hanoi-state-view"
-import { calculateGameLayout } from "../lib/game-layout"
+import { calculateGameLayout, diskColors } from "../lib/game-layout"
 import { calculatePossibleMoves, generateAllStates } from "../lib/game-logic"
 import TowerOfHanoiStateNode from "./tower-of-hanoi-state-node"
 
@@ -10,14 +10,6 @@ interface TowerOfHanoiStateGraphProps {
 
 const nodeSize = 120
 const graphPadding = 50
-
-// Disk colors for edge coloring
-const diskColors = {
-  1: "#ef4444", // red
-  2: "#eab308", // yellow
-  3: "#22c55e", // green
-  4: "#3b82f6", // blue
-}
 
 function calculateNodePosition(state: string, diskNum: number, vecA: {x: number, y: number}, vecB: {x: number, y: number}, vecC: {x: number, y: number}) {
   let pos = {x: 0, y: 0}

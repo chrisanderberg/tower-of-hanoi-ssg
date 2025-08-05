@@ -26,23 +26,26 @@ export interface GameLayout {
   baseX: number
   
   // Disk positioning
-  selectedDiskY: number
-  selectedDiskX: number
   diskGapFromBase: number
   diskBottomY: number
   diskCenterOffset: number
   diskSpacingOffset: number
-  
-  // Interactive elements (for tower-of-hanoi-game.tsx)
-  clickableAreaWidth: number
-  clickableAreaTopYPadding: number
-  clickableAreaBottomYPadding: number
-  clickableAreaHeight: number
-  clickableAreaXOffset: number
-  
-  // Text configuration
-  statusTextY: number
-  statusTextFontSize: number
+}
+
+// Disk colors used across components
+export const diskColors = {
+  1: "#ef4444", // red
+  2: "#eab308", // yellow
+  3: "#22c55e", // green
+  4: "#3b82f6", // blue
+}
+
+// Disk widths used across components
+export const diskWidths = {
+  1: 30,
+  2: 40,
+  3: 50,
+  4: 60,
 }
 
 export function calculateGameLayout(size: number, xOffset: number = 0, yOffset: number = 0, xCenter?: number, yCenter?: number): GameLayout {
@@ -77,8 +80,6 @@ export function calculateGameLayout(size: number, xOffset: number = 0, yOffset: 
   const pegWidth = 4 * scale
   const pegRadius = 2 * scale
   const baseY = 98 * scale + finalYOffset
-  const selectedDiskY = 5 * scale + finalYOffset
-  const selectedDiskX = viewBoxWidth / 2 + finalXOffset
   
   const baseWidth = 200 * scale
   const baseHeight = 8 * scale
@@ -91,15 +92,6 @@ export function calculateGameLayout(size: number, xOffset: number = 0, yOffset: 
   const diskSpacingOffset = diskHeight / 4
   const diskStrokeWidth = 1 * scale
   const diskCornerRadius = 6 * scale
-  
-  const clickableAreaWidth = 62.5 * scale
-  const clickableAreaTopYPadding = 5 * scale
-  const clickableAreaBottomYPadding = 30 * scale
-  const clickableAreaHeight = pegHeight + clickableAreaTopYPadding + clickableAreaBottomYPadding
-  const clickableAreaXOffset = clickableAreaWidth / 2
-  
-  const statusTextY = baseY + 20 * scale
-  const statusTextFontSize = 6 * scale
   
   return {
     viewBoxWidth,
@@ -120,18 +112,9 @@ export function calculateGameLayout(size: number, xOffset: number = 0, yOffset: 
     baseHeight,
     baseRadius,
     baseX,
-    selectedDiskY,
-    selectedDiskX,
     diskGapFromBase,
     diskBottomY,
     diskCenterOffset,
     diskSpacingOffset,
-    clickableAreaWidth,
-    clickableAreaTopYPadding,
-    clickableAreaBottomYPadding,
-    clickableAreaHeight,
-    clickableAreaXOffset,
-    statusTextY,
-    statusTextFontSize,
   }
 } 
