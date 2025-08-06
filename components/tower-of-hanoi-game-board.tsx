@@ -9,15 +9,19 @@ interface TowerOfHanoiGameBoardProps {
 }
 
 const gameSize = 250
+const buttonHeight = 20
+const buttonSpacing = 2
 
 export default function TowerOfHanoiGameBoard({ state, baseUrl }: TowerOfHanoiGameBoardProps) {
   const layout = calculateGameLayout(gameSize)
   
-  // SVG configuration - only needed in this component
-  const svgViewBox = `0 0 ${layout.viewBoxWidth} ${layout.viewBoxHeight * 2}`
-  
   // Calculate possible moves
   const possibleMoves = calculatePossibleMoves(state)
+
+  // Always reserve space for 3 buttons to maintain consistent view box height
+  const maxButtons = 3
+  const totalButtonHeight = maxButtons * buttonHeight + (maxButtons - 1) * buttonSpacing
+  const svgViewBox = `0 0 ${layout.viewBoxWidth} ${totalButtonHeight + 2 + layout.viewBoxHeight}`
 
   // Create descriptive move descriptions
   const getMoveDescription = (move: any) => {
@@ -29,20 +33,46 @@ export default function TowerOfHanoiGameBoard({ state, baseUrl }: TowerOfHanoiGa
       {/* Game board SVG */}
       <div className="flex justify-center">
         <svg viewBox={svgViewBox} className="w-full h-auto">
+          {/* Move buttons as SVG elements */}
+          {possibleMoves.map((move, index) => {
+            const buttonY = 2 + index * (buttonHeight + buttonSpacing)
+            
+            return (
+              <Link key={`move-${index}`} href={`${baseUrl}${move.toState}`}>
+                <g className="cursor-pointer">
+                  {/* Button background */}
+                  <rect
+                    x={layout.baseX}
+                    y={buttonY}
+                    width={layout.baseWidth}
+                    height={buttonHeight}
+                    fill="#3b82f6"
+                    rx={8}
+                    ry={8}
+                    className="hover:fill-blue-600 transition-colors"
+                  />
+                  
+                  {/* Button text */}
+                  <text
+                    x={layout.baseX + layout.baseWidth / 2}
+                    y={buttonY + buttonHeight / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill="white"
+                    fontSize={10}
+                    fontWeight="medium"
+                    className="pointer-events-none"
+                  >
+                    {getMoveDescription(move)}
+                  </text>
+                </g>
+              </Link>
+            )
+          })}
+          
           {/* Game configuration (base, pegs, disks) */}
-          <TowerOfHanoiStateView gameState={state} size={gameSize} />
+          <TowerOfHanoiStateView gameState={state} size={gameSize} yOffset={totalButtonHeight + 2} />
         </svg>
-      </div>
-
-      {/* Move buttons */}
-      <div className="mt-6 flex flex-wrap justify-center gap-3">
-        {possibleMoves.map((move, index) => (
-          <Link key={`move-${index}`} href={`${baseUrl}${move.toState}`}>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
-              {getMoveDescription(move)}
-            </button>
-          </Link>
-        ))}
       </div>
     </div>
   )
