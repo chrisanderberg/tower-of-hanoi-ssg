@@ -86,7 +86,7 @@ export default function TowerOfHanoiStateGraph({ baseUrl }: TowerOfHanoiStateGra
     })
   })
 
-  console.log(edges)
+
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-6xl mx-auto">

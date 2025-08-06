@@ -9,7 +9,7 @@ export async function generateStaticParams() {
     state: state,
   }))
 
-  //console.log(staticParams)
+
 
   return staticParams
 }

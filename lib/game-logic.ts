@@ -69,7 +69,6 @@ export function calculatePossibleMoves(state: string): Array<{
     })
   }
 
-  console.log(moves)
   return moves
 }
 
