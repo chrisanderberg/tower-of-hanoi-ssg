@@ -1,6 +1,4 @@
-import Link from "next/link"
-import TowerOfHanoiStateView from "./tower-of-hanoi-state-view"
-import { calculateGameLayout, diskColors } from "@/lib/game-layout"
+import { diskColors } from "@/lib/game-layout"
 import { calculatePossibleMoves, generateAllStates } from "@/lib/game-logic"
 import TowerOfHanoiStateNode from "./tower-of-hanoi-state-node"
 import { SIERPINSKI_VECTORS, SIERPINSKI_SCALE } from "@/lib/constants"
