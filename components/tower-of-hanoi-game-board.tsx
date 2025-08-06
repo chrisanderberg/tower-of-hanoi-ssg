@@ -1,7 +1,7 @@
 import Link from "next/link"
 import TowerOfHanoiStateView from "./tower-of-hanoi-state-view"
-import { calculateGameLayout } from "../lib/game-layout"
-import { calculatePossibleMoves } from "../lib/game-logic"
+import { calculateGameLayout } from "@/lib/game-layout"
+import { calculatePossibleMoves } from "@/lib/game-logic"
 
 interface TowerOfHanoiGameBoardProps {
   state: string

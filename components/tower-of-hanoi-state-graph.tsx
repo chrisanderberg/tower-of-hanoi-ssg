@@ -1,8 +1,9 @@
 import Link from "next/link"
 import TowerOfHanoiStateView from "./tower-of-hanoi-state-view"
-import { calculateGameLayout, diskColors } from "../lib/game-layout"
-import { calculatePossibleMoves, generateAllStates } from "../lib/game-logic"
+import { calculateGameLayout, diskColors } from "@/lib/game-layout"
+import { calculatePossibleMoves, generateAllStates } from "@/lib/game-logic"
 import TowerOfHanoiStateNode from "./tower-of-hanoi-state-node"
+import { SIERPINSKI_VECTORS, SIERPINSKI_SCALE } from "@/lib/constants"
 
 interface TowerOfHanoiStateGraphProps {
   baseUrl: string
@@ -36,15 +37,13 @@ function calculateNodePosition(state: string, diskNum: number, vecA: {x: number,
   return {x: pos.x / 2, y: pos.y / 2}
 }
 
-// Calculate node positions in a grid layout
+// Calculate node positions in Sierpinski triangle layout
 function calculateNodePositions(states: string[]) {
   const positions: { [key: string]: { x: number; y: number } } = {}
-  const cols = Math.ceil(Math.sqrt(states.length))
-  const rows = Math.ceil(states.length / cols)
   
   states.forEach((state, index) => {
-    const pos = calculateNodePosition(state, 4, {x: 0, y: -1}, {x: -Math.cos(Math.PI / 6), y: 0.5}, {x: Math.cos(Math.PI / 6), y: 0.5})
-    positions[state] = {x:1500 * pos.x, y: 1500 * pos.y}
+    const pos = calculateNodePosition(state, 4, SIERPINSKI_VECTORS.vecA, SIERPINSKI_VECTORS.vecB, SIERPINSKI_VECTORS.vecC)
+    positions[state] = {x: SIERPINSKI_SCALE * pos.x, y: SIERPINSKI_SCALE * pos.y}
   })
   
   return positions

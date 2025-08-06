@@ -1,4 +1,4 @@
-import { calculateGameLayout, diskColors } from "../lib/game-layout"
+import { calculateGameLayout, diskColors } from "@/lib/game-layout"
 
 interface TowerOfHanoiStateViewProps {
   gameState: string
