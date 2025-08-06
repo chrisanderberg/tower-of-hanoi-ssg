@@ -1,6 +1,6 @@
 import Link from "next/link"
 import TowerOfHanoiStateView from "./tower-of-hanoi-state-view"
-import { calculateGameLayout } from "@/lib/game-layout"
+import { calculateGameLayout, diskColors } from "@/lib/game-layout"
 import { calculatePossibleMoves } from "@/lib/game-logic"
 
 interface TowerOfHanoiGameBoardProps {
@@ -23,9 +23,9 @@ export default function TowerOfHanoiGameBoard({ state, baseUrl }: TowerOfHanoiGa
   const totalButtonHeight = maxButtons * buttonHeight + (maxButtons - 1) * buttonSpacing
   const svgViewBox = `0 0 ${layout.viewBoxWidth} ${totalButtonHeight + 2 + layout.viewBoxHeight}`
 
-  // Create descriptive move descriptions
-  const getMoveDescription = (move: any) => {
-    return `Move disk ${move.diskNumber} from peg ${move.fromPeg.toUpperCase()} to peg ${move.toPeg.toUpperCase()}`
+  // Get peg index from peg letter
+  const getPegIndex = (pegLetter: string) => {
+    return pegLetter.toLowerCase() === 'a' ? 0 : pegLetter.toLowerCase() === 'b' ? 1 : 2
   }
 
   return (
@@ -36,6 +36,12 @@ export default function TowerOfHanoiGameBoard({ state, baseUrl }: TowerOfHanoiGa
           {/* Move buttons as SVG elements */}
           {possibleMoves.map((move, index) => {
             const buttonY = 2 + index * (buttonHeight + buttonSpacing)
+            const fromPegIndex = getPegIndex(move.fromPeg)
+            const toPegIndex = getPegIndex(move.toPeg)
+            const fromX = layout.pegXPositions[fromPegIndex]
+            const toX = layout.pegXPositions[toPegIndex]
+            const arrowY = buttonY + buttonHeight / 4
+            const diskColor = diskColors[move.diskNumber as keyof typeof diskColors]
             
             return (
               <Link key={`move-${index}`} href={`${baseUrl}${move.toState}`}>
@@ -46,24 +52,69 @@ export default function TowerOfHanoiGameBoard({ state, baseUrl }: TowerOfHanoiGa
                     y={buttonY}
                     width={layout.baseWidth}
                     height={buttonHeight}
-                    fill="#3b82f6"
+                    fill="transparent"
+                    stroke="#6b7280"
+                    strokeWidth={0.5}
                     rx={8}
                     ry={8}
-                    className="hover:fill-blue-600 transition-colors"
+                    className="hover:stroke-blue-600 transition-colors"
                   />
                   
-                  {/* Button text */}
+                  {/* Horizontal line across the board */}
+                  <line
+                    x1={fromX}
+                    y1={arrowY}
+                    x2={toX}
+                    y2={arrowY}
+                    stroke={diskColor}
+                    strokeWidth={3}
+                    strokeLinecap="round"
+                    className="pointer-events-none"
+                  />
+                  
+                  {/* Vertical line below source (pickup) */}
+                  <line
+                    x1={fromX}
+                    y1={arrowY}
+                    x2={fromX}
+                    y2={buttonY + buttonHeight - 8}
+                    stroke={diskColor}
+                    strokeWidth={3}
+                    strokeLinecap="round"
+                    className="pointer-events-none"
+                  />
+                  
+                  {/* Vertical line below destination (placement) */}
+                  <line
+                    x1={toX}
+                    y1={arrowY}
+                    x2={toX}
+                    y2={buttonY + buttonHeight - 8}
+                    stroke={diskColor}
+                    strokeWidth={3}
+                    strokeLinecap="round"
+                    className="pointer-events-none"
+                  />
+                  
+                  {/* Arrow head pointing down at destination */}
+                  <polygon
+                    points={`${toX - 4},${buttonY + buttonHeight - 8} ${toX},${buttonY + buttonHeight - 4} ${toX + 4},${buttonY + buttonHeight - 8}`}
+                    fill={diskColor}
+                    className="pointer-events-none"
+                  />
+                  
+                  {/* Disk number centered on horizontal line */}
                   <text
-                    x={layout.baseX + layout.baseWidth / 2}
-                    y={buttonY + buttonHeight / 2}
+                    x={(fromX + toX) / 2}
+                    y={buttonY + buttonHeight - 6}
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    fill="white"
-                    fontSize={10}
-                    fontWeight="medium"
+                    fill={diskColor}
+                    fontSize={8}
+                    fontWeight="bold"
                     className="pointer-events-none"
                   >
-                    {getMoveDescription(move)}
+                    {move.diskNumber}
                   </text>
                 </g>
               </Link>
