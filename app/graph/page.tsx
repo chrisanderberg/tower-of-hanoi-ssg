@@ -13,7 +13,11 @@ export default function StateGraphPage() {
           </p>
         </div>
 
-        <TowerOfHanoiStateGraph baseUrl="/game/" />
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-6xl mx-auto">
+          <div className="flex justify-center">
+            <TowerOfHanoiStateGraph baseUrl="/game/" />
+          </div>
+        </div>
 
         <div className="mt-8 grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-md p-6">

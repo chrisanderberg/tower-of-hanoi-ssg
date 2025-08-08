@@ -4,7 +4,7 @@ import TowerOfHanoiStateNode from "./tower-of-hanoi-state-node"
 import { SIERPINSKI_VECTORS, SIERPINSKI_SCALE } from "@/lib/constants"
 
 interface TowerOfHanoiStateGraphProps {
-  baseUrl: string
+  baseUrl?: string
 }
 
 const nodeSize = 120
@@ -89,40 +89,36 @@ export default function TowerOfHanoiStateGraph({ baseUrl }: TowerOfHanoiStateGra
 
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-6xl mx-auto">
-      <div className="flex justify-center">
-        <svg viewBox={viewBox} className="w-full h-auto">
-          {/* Edges (connections between states) */}
-          {edges.map((edge, index) => (
-            <line
-              key={`edge-${index}`}
-              x1={edge.fromPos.x}
-              y1={edge.fromPos.y}
-              x2={edge.toPos.x}
-              y2={edge.toPos.y}
-              stroke={edge.color}
-              strokeWidth={8}
-              opacity={0.8}
-            />
-          ))}
-          
-          {/* State nodes */}
-          {allStates.map((state) => {
-            const pos = nodePositions[state]
-            
-            return (
-              <TowerOfHanoiStateNode
-                key={`node-${state}`}
-                state={state}
-                nodeSize={nodeSize}
-                xCenter={pos.x}
-                yCenter={pos.y}
-                baseUrl={baseUrl}
-              />
-            )
-          })}
-        </svg>
-      </div>
-    </div>
+    <svg viewBox={viewBox} className="w-full h-auto">
+      {/* Edges (connections between states) */}
+      {edges.map((edge, index) => (
+        <line
+          key={`edge-${index}`}
+          x1={edge.fromPos.x}
+          y1={edge.fromPos.y}
+          x2={edge.toPos.x}
+          y2={edge.toPos.y}
+          stroke={edge.color}
+          strokeWidth={8}
+          opacity={0.8}
+        />
+      ))}
+      
+      {/* State nodes */}
+      {allStates.map((state) => {
+        const pos = nodePositions[state]
+        
+        return (
+          <TowerOfHanoiStateNode
+            key={`node-${state}`}
+            state={state}
+            nodeSize={nodeSize}
+            xCenter={pos.x}
+            yCenter={pos.y}
+            baseUrl={baseUrl}
+          />
+        )
+      })}
+    </svg>
   )
 } 

@@ -8,7 +8,7 @@ interface TowerOfHanoiStateNodeProps {
   yOffset?: number
   xCenter?: number
   yCenter?: number
-  baseUrl: string
+  baseUrl?: string
 }
 
 export default function TowerOfHanoiStateNode({ state, nodeSize, xOffset = 0, yOffset = 0, xCenter, yCenter, baseUrl }: TowerOfHanoiStateNodeProps) {
@@ -24,7 +24,8 @@ export default function TowerOfHanoiStateNode({ state, nodeSize, xOffset = 0, yO
       finalYOffset = yCenter - nodeSize / 2
     }
   }
-  return (
+
+  const nodeContent = (
     <g key={`node-${state}`}>
       {/* Node background circle */}
       <circle
@@ -44,8 +45,8 @@ export default function TowerOfHanoiStateNode({ state, nodeSize, xOffset = 0, yO
         yCenter={finalYOffset + nodeSize / 2}
       />
       
-      {/* Clickable link area */}
-      <Link href={`${baseUrl}${state}`}>
+      {/* Clickable link area - only render if baseUrl is provided */}
+      {baseUrl && (
         <circle
           cx={finalXOffset + nodeSize / 2}
           cy={finalYOffset + nodeSize / 2}
@@ -56,7 +57,18 @@ export default function TowerOfHanoiStateNode({ state, nodeSize, xOffset = 0, yO
           opacity={0.1}
           className="cursor-pointer hover:opacity-80 hover:stroke-blue-600 transition-all"
         />
-      </Link>
+      )}
     </g>
   )
+
+  // Wrap in Link only if baseUrl is provided
+  if (baseUrl) {
+    return (
+      <Link href={`${baseUrl}${state}`}>
+        {nodeContent}
+      </Link>
+    )
+  }
+
+  return nodeContent
 }

@@ -16,9 +16,7 @@ export default function Navigation() {
             <Link href="/graph" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
               State Graph
             </Link>
-            <Link href="/explanation" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
-              Explanation
-            </Link>
+
           </div>
         </div>
       </div>

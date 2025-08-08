@@ -1,6 +1,6 @@
 import TowerOfHanoiGameBoard from "@/components/tower-of-hanoi-game-board"
 import Navigation from "@/components/navigation"
-import Rules from "@/components/rules"
+import Confetti from "@/components/confetti"
 import { generateAllStates, isValidGameState } from "@/lib/game-logic"
 
 // Generate static params for each game state (replaces getStaticPaths)
@@ -54,8 +54,20 @@ export default async function GameStatePage({ params }: PageProps) {
             baseUrl="/game/"
           />
         </div>
+        <Confetti isActive={state === 'cccc'} />
 
-        <Rules />
+        <div className="text-center mt-8">
+          <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Rules</h3>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Start with all disks on the left peg</li>
+              <li>• Win with all disks on the right peg</li>
+              <li>• Only move one disk at a time</li>
+              <li>• Only move the top disk from a peg</li>
+              <li>• Never place a larger disk on a smaller one</li>
+            </ul>
+          </div>
+        </div>
       </main>
     </div>
   )
