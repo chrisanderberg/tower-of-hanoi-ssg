@@ -29,7 +29,7 @@ export default function TowerOfHanoiGameBoard({ state, baseUrl }: TowerOfHanoiGa
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-md sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       {/* Game board SVG */}
       <div className="flex justify-center">
         <svg viewBox={svgViewBox} className="w-full h-auto">

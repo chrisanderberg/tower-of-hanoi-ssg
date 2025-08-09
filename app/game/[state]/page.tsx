@@ -57,7 +57,7 @@ export default async function GameStatePage({ params }: PageProps) {
         <Confetti isActive={state === 'cccc'} />
 
         <div className="text-center mt-8">
-          <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Rules</h3>
             <ul className="text-sm text-gray-600 space-y-1">
               <li>• Start with all disks on the left peg</li>

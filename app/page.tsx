@@ -16,92 +16,71 @@ export default function HomePage() {
             A classic puzzle game where you move disks between pegs. The goal is to move all disks from the left peg to the right peg,
             following the rules.
           </p>
-          <p className="text-md text-gray-500 max-w-3xl mx-auto">
-            This is a static site demonstration built with Next.js, featuring pre-generated game states and SVG-based visualizations. 
-            Explore the interactive game board above or view the complete state graph to see all possible game configurations.
-          </p>
         </div>
 
         {/* Interactive displays side by side */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* New Game Link */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Start New Game</h2>
-            <div className="flex justify-center">
-              <a href="/game/aaaa" className="block w-full">
+          <a href="/game/aaaa" className="block h-full">
+            <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow h-full flex flex-col">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Start New Game</h2>
+              <div className="flex justify-center flex-1">
                 <svg viewBox="0 0 200 120" className="w-full h-auto">
                   <TowerOfHanoiStateView 
                     gameState={defaultState} 
                     size={200}
                   />
                 </svg>
-              </a>
+              </div>
+              <p className="text-center text-gray-600 mt-4">
+                Click to start a new game with all disks on the left peg
+              </p>
             </div>
-            <p className="text-center text-gray-600 mt-4">
-              Click to start a new game with all disks on the left peg
-            </p>
-          </div>
+          </a>
 
           {/* State Graph Link */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">View State Graph</h2>
-            <div className="flex justify-center">
-              <a href="/graph" className="block">
+          <a href="/graph" className="block h-full">
+            <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow h-full flex flex-col">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">View State Graph</h2>
+              <div className="flex justify-center flex-1">
                 <TowerOfHanoiStateGraph />
-              </a>
+              </div>
+              <p className="text-center text-gray-600 mt-4">
+                Click to explore all possible game states and transitions
+              </p>
             </div>
-            <p className="text-center text-gray-600 mt-4">
-              Click to explore all possible game states and transitions
-            </p>
-          </div>
+          </a>
         </div>
 
         {/* Technical explanation section */}
         <div className="max-w-4xl mx-auto mt-16 space-y-8">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Technical Implementation</h2>
-            <div className="space-y-4 text-gray-600">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">About this project - Why I made it</h2>
+            <div className="space-y-6 text-gray-600">
               <p className="leading-relaxed">
-                This project demonstrates static site generation (SSG) with Next.js, pre-generating all possible Tower of Hanoi game states at build time. 
-                Each game state is represented as a 4-character string (e.g., "aaaa", "abca") where each character indicates which peg contains the corresponding disk.
+                The Tower of Hanoi puzzle, a common tool for teaching recursion, proved to be an excellent subject for a Static Site Generation (SSG) project. Its inherent state-based nature made it intriguing to explore building a playable game where each game state is a unique page linked by possible moves. Although this project isn't itself a report or part of a data pipeline, it offered a great way to practice some of the skills and practices useful for such situations. SSG sites can function as efficient data reports, automatically rebuilt as data changes in a pipeline. Much of the game, but the state graph in particular was a great opportunity to practice building visualizations with SVG. Therefore, this project served as an ideal way to practice and deepen skills directly applicable to other projects I'm interested in.
               </p>
-              <p className="leading-relaxed">
-                The game board uses SVG graphics for crisp, scalable rendering. Move buttons display as arrows showing the disk movement path, 
-                with colors matching the disk being moved. The state graph visualizes all possible game states in a Sierpinski triangle layout.
-              </p>
-              <p className="leading-relaxed">
-                Built with TypeScript, Tailwind CSS, and modern React patterns. The architecture supports instant navigation between game states 
-                without client-side JavaScript, making it perfect for portfolio demonstration of static site capabilities.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Key Features</h2>
-            <div className="grid md:grid-cols-2 gap-6">
+              
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Static Generation</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  All 81 possible game states are pre-generated at build time, enabling instant loading and optimal performance.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">SVG Visualizations</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Game board and state graph use SVG for crisp, scalable graphics that work perfectly at any resolution.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Interactive Navigation</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Visual move indicators show possible disk movements with color-coded arrows and disk numbers.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">State Graph</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Complete visualization of the game's state space showing all possible moves and transitions.
-                </p>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">Key Skills Practiced in This Project:</h3>
+                <ul className="space-y-2 leading-relaxed">
+                  <li className="flex items-baseline">
+                    <span className="text-gray-600 mr-3">•</span>
+                    <span><strong>Next.js SSG Features:</strong> Familiarized myself with Next.js SSG features.</span>
+                  </li>
+                  <li className="flex items-baseline">
+                    <span className="text-gray-600 mr-3">•</span>
+                    <span><strong>SVG Visualization:</strong> Practiced making visualizations using SVG, with the game state graph being particularly good practice.</span>
+                  </li>
+                  <li className="flex items-baseline">
+                    <span className="text-gray-600 mr-3">•</span>
+                    <span><strong>View Transitions API:</strong> Used navigation between game states as a great opportunity to familiarize myself with the View Transitions API.</span>
+                  </li>
+                  <li className="flex items-baseline">
+                    <span className="text-gray-600 mr-3">•</span>
+                    <span><strong>Transferable skills for Data Reports:</strong> Practiced skills useful for situations where SSG sites function as efficient data reports, automatically rebuilt as data changes in a pipeline.</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>

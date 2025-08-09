@@ -3,7 +3,7 @@ import TowerOfHanoiStateGraph from "@/components/tower-of-hanoi-state-graph"
 
 export default function StateGraphPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navigation />
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
@@ -13,14 +13,14 @@ export default function StateGraphPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-6xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-6xl mx-auto">
           <div className="flex justify-center">
             <TowerOfHanoiStateGraph baseUrl="/game/" />
           </div>
         </div>
 
         <div className="mt-8 grid md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-lg p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Graph Features</h3>
             <ul className="space-y-2 text-gray-600">
               <li className="flex items-center">
@@ -38,7 +38,7 @@ export default function StateGraphPage() {
             </ul>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-lg p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Statistics</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
